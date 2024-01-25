@@ -32,7 +32,7 @@ pipeline {
                     // Archive the repository files
                     sh 'tar -czf myflix_files.tar.gz * || true'
                     // Transfer the zipped repository to the production server
-                    sh "scp -o StrictHostKeyChecking=no myflix_files.tar.gz ${PROD_USERNAME}@${PROD_SERVER}:${PROD_DIR}"
+                    sh "scp -o StrictHostKeyChecking=no myflix_files.tar.gz -i key.pem ${PROD_USERNAME}@${PROD_SERVER}:${PROD_DIR}"
                     sh 'echo Files transferred to server. Unpacking ...'
                     sh "ssh -o StrictHostKeyChecking=no ${PROD_USERNAME}@${PROD_SERVER} 'pwd && cd myflix && tar -xzf myflix_files.tar.gz && ls -l'"
                     sh 'echo Repo unloaded on Prod. Server. Preparing to dockerize application ...'
