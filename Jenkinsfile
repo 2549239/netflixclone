@@ -31,7 +31,7 @@ pipeline {
                     // sh 'pwd myflix_files.tar.gz'
                     // Archive the repository files
                     sh 'tar -czf myflix_files.tar.gz * || true'
-                    sh "ssh -i "key.pem" ubuntu@ec2-44-221-222-164.compute-1.amazonaws.com"
+                    sh "ssh -i key.pem ubuntu@ec2-44-221-222-164.compute-1.amazonaws.com"
                     // Transfer the zipped repository to the production server
                     sh "scp -o StrictHostKeyChecking=no myflix_files.tar.gz -i key.pem ${PROD_USERNAME}@${PROD_SERVER}:${PROD_DIR}"
                     sh 'echo Files transferred to server. Unpacking ...'
