@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         PROD_USERNAME = 'ubuntu'
-        PROD_SERVER = '44.221.222.164'
+        PROD_SERVER = 'ec2-34-198-52-125.compute-1.amazonaws.com'
         PROD_DIR = '/home/ubuntu/myflix'
         DOCKER_IMAGE_NAME = 'myflix-deployment'
         DOCKER_CONTAINER_NAME = 'myflix'
