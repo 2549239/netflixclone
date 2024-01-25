@@ -1,0 +1,73 @@
+pipeline {
+    agent any
+    
+    environment {
+        // Define environment variables, if needed
+        PYTHON_VERSION = '3.12.1'
+        DJANGO_SETTINGS_MODULE = 'netclone\netflix\netflixprj\netflixprj.settings'
+        DOCKER_REGISTRY = 'your-docker-registry'
+        DOCKER_IMAGE_NAME = 'netflix-django-app'
+        DOCKER_IMAGE_TAG = 'latest'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout git
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    sh "python${PYTHON_VERSION} -m venv venv"
+                    sh "source venv/bin/activate && pip install -r requirements.txt"
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    sh "source venv/bin/activate && python${PYTHON_VERSION} manage.py test"
+                }
+            }
+        }
+
+        stage('Build and Collect Static Files') {
+            steps {
+                script {
+                    sh "source venv/bin/activate && python${PYTHON_VERSION} manage.py collectstatic --noinput"
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ."
+                }
+            }
+        }
+
+        stage('Deploy with Docker') {
+            steps {
+                script {
+                    // Build the Docker image
+                    sh "docker build -t myflix-app:latest ."
+                    
+                    // Run the Docker container in detached mode (-d)
+                    sh "docker run -d -p 8000:8000 --name myflix-container myflix-django-app:latest"
+                }
+            }
+        }
+    
+
+    post {
+        always {
+            script {
+                sh "deactivate || true"
+            }
+        }
+    }
+}
